@@ -11,6 +11,7 @@ use yii\web\Application;
 
 class Module extends \yii\base\Module implements Plugin
 {
+    public $models = [];
     public function behaviors()
     {
         return [
@@ -35,6 +36,6 @@ class Module extends \yii\base\Module implements Plugin
     }
 
     public function getModels() {
-        return $this->getPluginsResults(__FUNCTION__);
+        return array_merge($this->getPluginsResults(__FUNCTION__), $this->models);
     }
 }

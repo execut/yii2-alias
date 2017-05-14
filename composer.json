@@ -1,0 +1,24 @@
+{
+  "name": "execut/yii2-alias",
+  "description": "Yii2 eXeCUT alias",
+  "keywords": ["yii2", "alias"],
+  "homepage": "https://github.com/execut/yii2-alias",
+  "type": "library",
+  "license": "Apache-2.0",
+  "support": {
+    "issues": "https://github.com/execut/yii2-alias/issues?state=open",
+    "wiki": "https://github.com/execut/yii2-alias/wiki",
+    "source": "https://github.com/execut/yii2-alias"
+  },
+  "minimum-stability": "stable",
+  "require": {
+    "yiisoft/yii2": "~2.0.6",
+    "execut/yii2-migration": "*",
+    "execut/yii2-base": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "execut\\alias\\": ""
+    }
+  }
+}
