@@ -10,11 +10,10 @@
     "wiki": "https://github.com/execut/yii2-alias/wiki",
     "source": "https://github.com/execut/yii2-alias"
   },
-  "minimum-stability": "stable",
   "require": {
     "yiisoft/yii2": "~2.0.6",
-    "execut/yii2-migration": "*",
-    "execut/yii2-base": "*"
+    "execut/yii2-migration": "~0.1",
+    "execut/yii2-base": "~1.0"
   },
   "autoload": {
     "psr-4": {
