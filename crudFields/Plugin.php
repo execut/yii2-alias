@@ -4,9 +4,8 @@
 
 namespace execut\alias\crudFields;
 
-class Plugin
+class Plugin extends \execut\crudFields\Plugin
 {
-    public $owner = null;
     public function getFields() {
         return [
             [
