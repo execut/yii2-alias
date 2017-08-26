@@ -13,4 +13,10 @@ class Plugin extends \execut\crudFields\Plugin
             ],
         ];
     }
+
+    public function rules() {
+        return [
+            ['alias', 'unique', 'skipOnEmpty' => false],
+        ];
+    }
 }
