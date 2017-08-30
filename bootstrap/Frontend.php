@@ -25,8 +25,6 @@ class Frontend extends Bootstrap
     public function bootstrap($app)
     {
         parent::bootstrap($app);
-        $app->urlManager->showScriptName = false;
-        $app->urlManager->enablePrettyUrl = true;
         $app->urlManager->addRules([
             [
                 'class' => UrlRule::class,
