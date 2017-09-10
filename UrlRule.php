@@ -28,20 +28,25 @@ class UrlRule extends CompositeUrlRule
 
     public function parseRequest($manager, $request)
     {
-        $params = parent::parseRequest($manager, $request);
-        if (!$params || empty($params[1]) || !isset($params[1]['id'])) {
-            return false;
-        }
+        foreach ($this->rules as $rule) {
+            /* @var $rule UrlRule */
+            $params = $rule->parseRequest($manager, $request);
+            if ($params !== false) {
+                if (!$params || empty($params[1]) || !isset($params[1]['id'])) {
+                    continue;
+                }
 
-        $model = $this->getModelByRoute($params[0]);
-        if (!$model) {
-            return false;
-        }
+                $model = $this->getModelByRoute($params[0]);
+                if (!$model) {
+                    continue;
+                }
 
-        if ($id = $this->findByAlias($model, $params[1]['id'])) {
-            $params[1]['id'] = $id;
+                if ($id = $this->findByAlias($model, $params[1]['id'])) {
+                    $params[1]['id'] = $id;
 
-            return $params;
+                    return $params;
+                }
+            }
         }
 
         return false;
