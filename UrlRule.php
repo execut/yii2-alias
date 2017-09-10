@@ -5,32 +5,43 @@
 namespace execut\alias;
 
 
+use yii\helpers\ArrayHelper;
+use yii\web\CompositeUrlRule;
 use yii\web\UrlRuleInterface;
 
-class UrlRule implements UrlRuleInterface
+class UrlRule extends CompositeUrlRule
 {
     public function createUrl($manager, $route, $params)
     {
-        $models = $this->getModels();
-        if (isset($models[$route]) && !empty($params['id'])) {
-            return $this->findById($models[$route], $params['id']);
+        $model = $this->getModelByRoute($route);
+        if ($model && !empty($params['id'])) {
+            $id = $this->findById($model, $params['id']);
+            if ($id || $id === '') {
+                $params['id'] = $id;
+            }
         }
 
-        return false;
+        $url = parent::createUrl($manager, $route, $params);
+
+        return $url;
     }
 
     public function parseRequest($manager, $request)
     {
-        $models = $this->getModels();
-        foreach ($models as $route => $model) {
-            if ($id = $this->findByAlias($model, $request->url)) {
-                return [
-                    $route,
-                    [
-                        'id' => $id,
-                    ],
-                ];
-            }
+        $params = parent::parseRequest($manager, $request);
+        if (!$params || empty($params[1]) || !isset($params[1]['id'])) {
+            return false;
+        }
+
+        $model = $this->getModelByRoute($params[0]);
+        if (!$model) {
+            return false;
+        }
+
+        if ($id = $this->findByAlias($model, $params[1]['id'])) {
+            $params[1]['id'] = $id;
+
+            return $params;
         }
 
         return false;
@@ -49,12 +60,62 @@ class UrlRule implements UrlRuleInterface
         ])->select('id')->createCommand()->queryScalar();
     }
 
+    protected function getModelByRoute($route, $isReverse = false) {
+        $models = $this->getModels();
+        if ($isReverse) {
+            $models = array_reverse($models);
+        }
+
+        foreach ($models as $model => $rule) {
+            if ($rule['route'] === $route) {
+                return $rule['modelClass'];
+            }
+        }
+    }
+
     /**
      * @return mixed
      */
     protected function getModels()
     {
         $models = \yii::$app->getModule('alias')->getModels();
+        foreach ($models as &$rule) {
+            unset($rule['order']);
+        }
+
         return $models;
     }
+
+    public function createRules()
+    {
+        $models = $this->getModels();
+        $rules = [];
+        foreach ($models as $model => $rule) {
+            unset($rule['modelClass']);
+            unset($rule['order']);
+            if (!isset($rule['encodeParams'])) {
+                $rule['encodeParams'] = false;
+            }
+
+            $rule = ArrayHelper::merge([
+                'class' => \yii\web\UrlRule::class,
+                'pattern' => '<id:.*>',
+            ], $rule);
+
+            $rule = \yii::createObject($rule);
+
+            $rules[] = $rule;
+        }
+
+        return $rules;
+    }
+
+//    protected function iterateRules($rules, $manager, $route, $params)
+//    {
+//        $rules = array_reverse($rules);
+//        var_dump($rules);
+//        exit;
+//
+//        return parent::iterateRules($rules, $manager, $route, $params);
+//    }
 }

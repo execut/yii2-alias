@@ -36,6 +36,37 @@ class Module extends \yii\base\Module implements Plugin
     }
 
     public function getModels() {
-        return array_merge($this->getPluginsResults(__FUNCTION__), $this->models);
+        $models = array_merge($this->getPluginsResults(__FUNCTION__), $this->models);
+        uasort($models, function ($model1, $model2) {
+            if (empty($model1['order'])) {
+                return false;
+            } else if (empty($model2['order'])) {
+                return true;
+            } else {
+                return $model1['order'] >= $model2['order'];
+            }
+        });
+
+        $this->attachToTables($models);
+
+        return $models;
+    }
+
+    /**
+     * @param $models
+     */
+    protected function attachToTables($models): void
+    {
+        $tables = [];
+        foreach ($models as $params) {
+            $modelClass = $params['modelClass'];
+            $tables[] = $modelClass::tableName();
+        }
+
+        $attacher = new Attacher([
+            'tables' => $tables,
+        ]);
+
+        $attacher->safeUp();
     }
 }
