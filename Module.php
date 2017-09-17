@@ -5,7 +5,10 @@
 namespace execut\alias;
 
 
+use execut\alias\models\Log;
 use execut\dependencies\PluginBehavior;
+use yii\db\ActiveRecord;
+use yii\helpers\ArrayHelper;
 use yii\i18n\PhpMessageSource;
 use yii\web\Application;
 
@@ -47,26 +50,6 @@ class Module extends \yii\base\Module implements Plugin
             }
         });
 
-        $this->attachToTables($models);
-
         return $models;
-    }
-
-    /**
-     * @param $models
-     */
-    protected function attachToTables($models): void
-    {
-        $tables = [];
-        foreach ($models as $params) {
-            $modelClass = $params['modelClass'];
-            $tables[] = $modelClass::tableName();
-        }
-
-        $attacher = new Attacher([
-            'tables' => $tables,
-        ]);
-
-        $attacher->safeUp();
     }
 }

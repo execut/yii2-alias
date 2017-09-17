@@ -5,8 +5,12 @@
 namespace execut\alias;
 
 
+use execut\alias\models\Log;
+use yii\base\Event;
 use yii\helpers\ArrayHelper;
+use yii\helpers\Url;
 use yii\web\CompositeUrlRule;
+use yii\web\Controller;
 use yii\web\UrlRuleInterface;
 
 class UrlRule extends CompositeUrlRule
@@ -60,9 +64,37 @@ class UrlRule extends CompositeUrlRule
 
     protected function findByAlias($modelClass, $url) {
         $url = trim($url, '/');
-        return $modelClass::find()->andWhere([
+        $result = $modelClass::find()->andWhere([
             'alias' => $url,
         ])->select('id')->createCommand()->queryScalar();
+        if (!$result) {
+            $where = [
+                'owner_table' => $modelClass::tableName(),
+                'old_alias' => $url,
+            ];
+            $redirectedModel = Log::find()->andWhere($where)->select('owner_id')->one();
+            if ($redirectedModel) {
+                Event::on(Controller::class, 'beforeAction', function () use ($modelClass, $redirectedModel) {
+                    \yii::$app->response->redirect([
+                        $this->getRouteByModel($modelClass),
+                        'id' => $redirectedModel->owner_id,
+                    ], 301);
+                    \yii::$app->end();
+                });
+            }
+        }
+
+        return $result;
+    }
+
+    protected function getRouteByModel($modelClass) {
+        $models = $this->getModels();
+
+        foreach ($models as $model => $rule) {
+            if ($rule['modelClass'] === $modelClass) {
+                return $rule['route'];
+            }
+        }
     }
 
     protected function getModelByRoute($route, $isReverse = false) {

@@ -9,24 +9,14 @@ use execut\alias\Module;
 use execut\alias\UrlRule;
 use execut\yii\Bootstrap;
 
-class Frontend extends Bootstrap
+class Frontend extends Common
 {
-    public function getDefaultDepends()
-    {
-        return [
-            'modules' => [
-                'alias' => [
-                    'class' => Module::class,
-                ],
-            ],
-        ];
-    }
-
     public function bootstrap($app)
     {
         parent::bootstrap($app);
+        \yii::$app->urlManager->enablePrettyUrl = true;
         $app->urlManager->addRules([
-            [
+            'alias' => [
                 'class' => UrlRule::class,
             ],
         ]);
