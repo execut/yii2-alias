@@ -18,10 +18,15 @@ class UrlRule extends CompositeUrlRule
     public function createUrl($manager, $route, $params)
     {
         $model = $this->getModelByRoute($route);
-        if ($model && !empty($params['id'])) {
-            $id = $this->findById($model, $params['id']);
-            if ($id || $id === '') {
-                $params['id'] = $id;
+        if ($model) {
+            if (array_key_exists('alias', $params)) {
+                $params['id'] = $params['alias'];
+                unset($params['alias']);
+            } else if (!empty($params['id'])) {
+                $id = $this->findById($model, $params['id']);
+                if ($id || $id === '') {
+                    $params['id'] = $id;
+                }
             }
         }
 
