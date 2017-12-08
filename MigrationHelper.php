@@ -6,9 +6,9 @@ namespace execut\alias;
 
 
 use execut\yii\migration\Table;
-use yii\base\Object;
+use yii\base\BaseObject;
 
-class MigrationHelper extends Object
+class MigrationHelper extends BaseObject
 {
     /**
      * @var Table
