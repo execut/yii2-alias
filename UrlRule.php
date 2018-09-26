@@ -39,7 +39,12 @@ class UrlRule extends CompositeUrlRule
     {
         foreach ($this->rules as $rule) {
             /* @var $rule UrlRule */
-            $params = $rule->parseRequest($manager, $request);
+            if ($request->url === '/' && $rule->route === \yii::$app->defaultRoute) {
+                $params = [$rule->route, ['id' => '-']];
+            } else {
+                $params = $rule->parseRequest($manager, $request);
+            }
+
             if ($params !== false) {
                 if (!$params || empty($params[1]) || !isset($params[1]['id'])) {
                     continue;

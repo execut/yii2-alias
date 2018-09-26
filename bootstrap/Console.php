@@ -9,12 +9,11 @@ use execut\alias\Module;
 use execut\alias\UrlRule;
 use execut\yii\Bootstrap;
 
-class Frontend extends Common
+class Console extends Common
 {
     public function bootstrap($app)
     {
         parent::bootstrap($app);
-        \yii::$app->urlManager->enablePrettyUrl = true;
         $this->initUrlRules($app);
     }
 }
