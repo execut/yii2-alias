@@ -16,6 +16,7 @@ class Plugin extends \execut\crudFields\Plugin
             [
                 'attribute' => 'alias',
                 'module' => 'alias',
+                'required' => true,
             ],
         ];
     }
