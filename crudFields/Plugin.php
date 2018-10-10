@@ -8,23 +8,35 @@ use execut\alias\Attacher;
 use execut\alias\models\Log;
 use yii\base\Event;
 use yii\db\ActiveRecord;
+use yii\helpers\HtmlPurifier;
+use yii\helpers\Inflector;
 
 class Plugin extends \execut\crudFields\Plugin
 {
+    public $transliteratedAttribute = null;
     public function getFields() {
         return [
             [
                 'attribute' => 'alias',
                 'module' => 'alias',
-                'required' => true,
             ],
         ];
     }
 
     public function rules() {
         return [
-            ['alias', 'unique', 'skipOnEmpty' => false, 'except' => 'grid'],
+            'aliasDefaultValue' => ['alias', 'default', 'skipOnEmpty' => false, 'except' => 'grid', 'value' => function () {
+                return $this->getDefaultValue();
+            }],
+            'aliasRequired' => ['alias', 'required', 'skipOnEmpty' => false, 'except' => 'grid'],
+            'aliasUniqueValue' => ['alias', 'unique', 'skipOnEmpty' => false, 'except' => 'grid'],
         ];
+    }
+
+    protected function getDefaultValue() {
+        if ($transliteratedAttribute = $this->transliteratedAttribute) {
+            return preg_replace('/[^a-z0-9\-]*/', '', preg_replace('/[ -]+/', '-', strtolower(Inflector::transliterate($this->owner->$transliteratedAttribute))));
+        }
     }
 
     public function attach() {
