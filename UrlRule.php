@@ -78,11 +78,7 @@ class UrlRule extends CompositeUrlRule
             'alias' => $url,
         ])->select('id')->createCommand()->queryScalar();
         if (!$result) {
-            $where = [
-                'owner_table' => $modelClass::tableName(),
-                'old_alias' => $url,
-            ];
-            $redirectedModel = Log::find()->andWhere($where)->select('owner_id')->one();
+            $redirectedModel = Log::find()->byOldAlias($url, $modelClass)->select('owner_id')->one();
             if ($redirectedModel) {
                 Event::on(Controller::class, 'beforeAction', function () use ($modelClass, $redirectedModel) {
                     \yii::$app->response->redirect([
