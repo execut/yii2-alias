@@ -14,6 +14,7 @@ use yii\helpers\Inflector;
 class Plugin extends \execut\crudFields\Plugin
 {
     public $transliteratedAttribute = null;
+    public $isUnique = true;
     public function getFields() {
         return [
             [
@@ -24,13 +25,18 @@ class Plugin extends \execut\crudFields\Plugin
     }
 
     public function rules() {
-        return [
+        $rules = [
             'aliasDefaultValue' => ['alias', 'default', 'skipOnEmpty' => false, 'except' => 'grid', 'value' => function () {
                 return $this->getDefaultValue();
             }],
             'aliasRequired' => ['alias', 'required', 'skipOnEmpty' => false, 'except' => 'grid'],
-            'aliasUniqueValue' => ['alias', 'unique', 'skipOnEmpty' => false, 'except' => 'grid'],
         ];
+
+        if ($this->isUnique) {
+            $rules['aliasUniqueValue'] = ['alias', 'unique', 'skipOnEmpty' => false, 'except' => 'grid'];
+        }
+
+        return $rules;
     }
 
     protected function getDefaultValue() {
