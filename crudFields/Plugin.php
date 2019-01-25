@@ -45,7 +45,13 @@ class Plugin extends \execut\crudFields\Plugin
         }
     }
 
+    protected static $isAttached = false;
     public function attach() {
+        if (self::$isAttached) {
+            return;
+        }
+
+        self::$isAttached = true;
         $attacher = new Attacher([
             'tables' => [
                 $this->owner->tableName()
