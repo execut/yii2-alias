@@ -20,6 +20,10 @@ class UrlRule extends CompositeUrlRule
         $model = $this->getModelByRoute($route);
         if ($model) {
             if (array_key_exists('alias', $params)) {
+                if ($params['alias'] === '-') {
+                    $params['alias'] = '';
+                }
+
                 $params['id'] = $params['alias'];
                 unset($params['alias']);
             } else if (!empty($params['id'])) {
