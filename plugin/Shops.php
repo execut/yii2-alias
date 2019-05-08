@@ -25,3 +25,4 @@ class Shops implements Plugin
         ];
     }
 }
+
