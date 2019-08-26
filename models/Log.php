@@ -7,6 +7,7 @@ namespace execut\alias\models;
 
 use execut\crudFields\Behavior;
 use execut\crudFields\BehaviorStub;
+use execut\crudFields\fields\Field;
 use execut\crudFields\fields\NumberField;
 use execut\crudFields\ModelsHelperTrait;
 use yii\behaviors\TimestampBehavior;
@@ -37,6 +38,7 @@ class Log extends ActiveRecord
     public static function add($model) {
         $oldAlias = $model->getOldAttribute('alias');
         $log = new self;
+        $log->scenario = Field::SCENARIO_FORM;
         $log->setAttributes([
             'owner_table' => $model::tableName(),
             'owner_id' => $model->id,

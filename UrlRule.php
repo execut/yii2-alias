@@ -20,15 +20,15 @@ class UrlRule extends CompositeUrlRule
         $model = $this->getModelByRoute($route);
         if ($model) {
             if (array_key_exists('alias', $params)) {
-                if ($params['alias'] === '-') {
-                    $params['alias'] = '';
-                }
-
                 $params['id'] = $params['alias'];
                 unset($params['alias']);
             } else if (!empty($params['id'])) {
                 $id = $this->findById($model, $params['id']);
-                if ($id || $id === '') {
+                if ($id !== false) {
+                    if ($id === null) {
+                        $id = '';
+                    }
+
                     $params['id'] = $id;
                 }
             }
@@ -44,7 +44,7 @@ class UrlRule extends CompositeUrlRule
         foreach ($this->rules as $rule) {
             /* @var $rule UrlRule */
             if ($request->url === '/' && $rule->route === \yii::$app->defaultRoute) {
-                $params = [$rule->route, ['id' => '-']];
+                $params = [$rule->route, ['id' => '']];
             } else {
                 $params = $rule->parseRequest($manager, $request);
             }
@@ -78,9 +78,16 @@ class UrlRule extends CompositeUrlRule
 
     protected function findByAlias($modelClass, $url) {
         $url = trim($url, '/');
-        $result = $modelClass::find()->andWhere([
-            'alias' => $url,
-        ])->select('id')->createCommand()->queryScalar();
+        $q = $modelClass::find()->select('id');
+        if ($url === '') {
+            $q->andWhere('alias is null');
+        } else {
+            $q->andWhere([
+                'alias' => $url,
+            ]);
+        }
+
+        $result = $q->createCommand()->queryScalar();
         if (!$result) {
             $redirectedModel = Log::find()->byOldAlias($url, $modelClass)->select('owner_id')->one();
             if ($redirectedModel) {
