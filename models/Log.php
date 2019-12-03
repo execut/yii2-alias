@@ -72,7 +72,7 @@ class Log extends ActiveRecord
                     ]),
                 ],
                 [
-                    'class' => TimestampBehavior::className(),
+                    'class' => TimestampBehavior::class,
                     'createdAtAttribute' => 'created',
                     'updatedAtAttribute' => 'updated',
                     'value' => new Expression('NOW()'),
