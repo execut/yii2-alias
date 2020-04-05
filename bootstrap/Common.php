@@ -14,7 +14,7 @@ use yii\base\Event;
 use yii\db\ActiveRecord;
 use yii\helpers\ArrayHelper;
 
-class Common extends Bootstrap
+abstract class Common extends Bootstrap
 {
     public $isBootstrapI18n = true;
     public $_defaultDepends = [

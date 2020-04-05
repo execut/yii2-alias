@@ -9,7 +9,7 @@ use execut\alias\Module;
 use execut\alias\UrlRule;
 use execut\yii\Bootstrap;
 
-class Frontend extends Common
+class Frontend extends Web
 {
     public function bootstrap($app)
     {

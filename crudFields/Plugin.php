@@ -48,25 +48,6 @@ class Plugin extends \execut\crudFields\Plugin
         }
     }
 
-    protected static $isAttached = false;
-    public function attach() {
-        if (self::$isAttached) {
-            return;
-        }
-
-        self::$isAttached = true;
-        $attacher = new Attacher([
-            'tables' => [
-                $this->owner->tableName()
-            ],
-        ]);
-
-        $attacher->safeUp();
-        Event::on($this->owner->className(), ActiveRecord::EVENT_BEFORE_UPDATE, function ($e) {
-            $this->saveModelLog($e->sender);
-        });
-    }
-
     /**
      * @param ActiveRecord $owner
      */
