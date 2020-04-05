@@ -11,7 +11,7 @@ class m170917_152309_addLogsTable extends Migration
             'owner_id' => $this->integer()->unsigned()->notNull(),
             'owner_table' => $this->string()->notNull(),
             'old_alias' => $this->string()->notNull(),
-            'visible' => $this->boolean()->notNull()->defaultValue('true'),
+            'visible' => $this->boolean()->notNull()->defaultValue(true),
         ]));
     }
 
