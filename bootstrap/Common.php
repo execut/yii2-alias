@@ -36,4 +36,9 @@ abstract class Common extends Bootstrap
             ],
         ]);
     }
+
+    protected function getModuleFolderName()
+    {
+        return 'yii2-alias';
+    }
 }

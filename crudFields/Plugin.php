@@ -16,9 +16,9 @@ class Plugin extends \execut\crudFields\Plugin
     public $transliteratedAttribute = null;
     public $isUnique = true;
     public $isRequired = true;
-    public function getFields() {
+    protected function _getFields() {
         return [
-            [
+            'alias' => [
                 'attribute' => 'alias',
                 'module' => 'alias',
             ],
@@ -32,11 +32,17 @@ class Plugin extends \execut\crudFields\Plugin
             }],
         ];
         if ($this->isRequired) {
-            $rules['aliasRequired'] = ['alias', 'required', 'skipOnEmpty' => false, 'except' => 'grid'];
+            if (is_callable($this->isRequired)) {
+                $when = $this->isRequired;
+            } else {
+                $when = null;
+            }
+
+            $rules['aliasRequired'] = ['alias', 'required', 'skipOnEmpty' => false, 'except' => 'grid', 'when' => $when];
         }
 
         if ($this->isUnique) {
-            $rules['aliasUniqueValue'] = ['alias', 'unique', 'skipOnEmpty' => false, 'except' => 'grid'];
+            $rules['aliasUniqueValue'] = ['alias', 'unique', 'skipOnEmpty' => true, 'except' => 'grid'];
         }
 
         return $rules;
