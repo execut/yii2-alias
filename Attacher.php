@@ -7,6 +7,7 @@ namespace execut\alias;
 
 use execut\yii\migration\Inverter;
 use execut\yii\migration\Migration;
+use yii\base\Exception;
 
 class Attacher extends \execut\yii\migration\Attacher
 {
@@ -18,7 +19,12 @@ class Attacher extends \execut\yii\migration\Attacher
 
     public function initInverter(Inverter $i) {
         foreach ($this->tables as $table) {
-            $isAttached = $this->db->getTableSchema($table)->getColumn('alias');
+            $tableSchema = $this->db->getTableSchema($table);
+            if (!$tableSchema) {
+                throw new Exception('Not found table ' . $table);
+            }
+
+            $isAttached = $tableSchema->getColumn('alias');
             if (!$isAttached) {
                 $helper = new MigrationHelper([
                     'table' => $this->table($table)
