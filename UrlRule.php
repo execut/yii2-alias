@@ -80,7 +80,7 @@ class UrlRule extends CompositeUrlRule
         $url = trim($url, '/');
         $q = $modelClass::find()->select('id');
         if ($url === '') {
-            $q->andWhere('alias is null');
+            $q->andWhere('alias is null or alias=\'-\'');
         } else {
             $q->andWhere([
                 'alias' => $url,
